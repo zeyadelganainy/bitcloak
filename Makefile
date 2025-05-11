@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -std=c99 -Wall -fopenmp -Iinclude
-SRC = src/main.c src/embed.c src/extract.c src/image_io.c src/utils.c
+SRC = src/main.c src/embed.c src/extract.c src/image_io.c src/utils.c src/crypto.c src/aes.c
 OBJ = $(SRC:.c=.o)
 TARGET = bitcloak
 
