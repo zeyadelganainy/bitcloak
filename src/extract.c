@@ -1,8 +1,9 @@
+
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <stdlib.h>
-
+#include "extract.h"
 
 char* extract_message(const uint8_t *image_data, size_t image_size) {
     size_t bit_index = 0;
@@ -15,22 +16,38 @@ char* extract_message(const uint8_t *image_data, size_t image_size) {
 
     for (size_t i = 0; i < buffer_size; ++i) {
         char ch = 0;
-
         for (int b = 7; b >= 0; --b) {
-            uint8_t bit = image_data[bit_index] & 1;
+            uint8_t bit = image_data[bit_index++] & 1;
             ch |= (bit << b);
-            bit_index++;
         }
 
         message[i] = ch;
-        if (ch == '\0') break;  // message is done
+        if (ch == '\0') break;
     }
 
     return message;
 }
 
-uint8_t* extract_file(const uint8_t *image_data, size_t image_size, size_t *out_file_size) {
+uint8_t* extract_file(const uint8_t *image_data, size_t image_size, size_t *out_file_size, char *out_filename) {
     size_t bit_index = 0;
+
+    // Read filename length
+    uint8_t name_len = 0;
+    for (int b = 7; b >= 0; --b) {
+        uint8_t bit = image_data[bit_index++] & 1;
+        name_len |= (bit << b);
+    }
+
+    // Read filename
+    for (uint8_t i = 0; i < name_len; ++i) {
+        char ch = 0;
+        for (int b = 7; b >= 0; --b) {
+            uint8_t bit = image_data[bit_index++] & 1;
+            ch |= (bit << b);
+        }
+        out_filename[i] = ch;
+    }
+    out_filename[name_len] = '\0';
 
     // Read file size
     size_t file_size = 0;
@@ -44,11 +61,6 @@ uint8_t* extract_file(const uint8_t *image_data, size_t image_size, size_t *out_
     }
 
     *out_file_size = file_size;
-
-    if ((file_size * 8 + bit_index) > image_size) {
-        fprintf(stderr, "Corrupt or incomplete data.\n");
-        exit(1);
-    }
 
     uint8_t *buffer = malloc(file_size);
     if (!buffer) {
