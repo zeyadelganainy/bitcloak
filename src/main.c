@@ -98,6 +98,7 @@ int main(int argc, char *argv[]) {
         free(extracted);
     }
     else if (strcmp(cmd, "embedfile") == 0) {
+        double start = current_time_ms();
         if (!file_path) {
             fprintf(stderr, "Error: embedfile requires -f <file>\n");
             return 1;
@@ -144,9 +145,12 @@ int main(int argc, char *argv[]) {
         embed_file(pixels, img_size, fdata, fsize, filename);
         save_png(out_path, pixels, width, height);
         printf("✅ Embedded file '%s' into %s (%zu bytes)\n", filename, out_path, fsize);
+        double end = current_time_ms();
+        printf("⏱️ Embed time: %.2f ms\n", end - start);
         free(fdata);
     }
     else if (strcmp(cmd, "extractfile") == 0) {
+        double start = current_time_ms();
         size_t fsize;
         char recovered_name[256];
         uint8_t *data = extract_file(pixels, img_size, &fsize, recovered_name);
@@ -181,6 +185,8 @@ int main(int argc, char *argv[]) {
         fclose(fp);
         printf("✅ Extracted file to %s (%zu bytes)\n", final_output, fsize);
         free(data);
+        double end = current_time_ms();
+        printf("⏱️ Extract time: %.2f ms\n", end - start);
     }
     else {
         fprintf(stderr, "Unknown command: %s\n", cmd);
