@@ -67,14 +67,13 @@ int main(int argc, char *argv[]) {
     }
 
     int width, height;
-    uint8_t *pixels = load_bmp(in_img, &width, &height);
+    uint8_t *pixels = load_png(in_img, &width, &height);
     if (!pixels) {
         fprintf(stderr, "Failed to load image: %s\n", in_img);
         return 1;
     }
 
-    size_t row_padded = ((width * 3 + 3) & ~3);
-    size_t img_size = row_padded * height;
+    size_t img_size = width * height * 3;
 
     if (strcmp(cmd, "embed") == 0) {
         if (!message) {
@@ -82,7 +81,7 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         embed_message(pixels, img_size, message);
-        save_bmp(out_path, pixels, width, height);
+        save_png(out_path, pixels, width, height);
         printf("✅ Embedded message into %s\n", out_path);
     }
     else if (strcmp(cmd, "extract") == 0) {
@@ -143,7 +142,7 @@ int main(int argc, char *argv[]) {
         else filename++;
 
         embed_file(pixels, img_size, fdata, fsize, filename);
-        save_bmp(out_path, pixels, width, height);
+        save_png(out_path, pixels, width, height);
         printf("✅ Embedded file '%s' into %s (%zu bytes)\n", filename, out_path, fsize);
         free(fdata);
     }
