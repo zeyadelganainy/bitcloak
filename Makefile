@@ -13,4 +13,5 @@ $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	del /Q src\*.o bitcloak.exe 2>nul || exit 0
+

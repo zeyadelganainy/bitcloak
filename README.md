@@ -86,6 +86,34 @@ make
 * [ ] AES encryption for payload
 
 ---
+## 📦 File Embedding Limits
+
+Bitcloak uses **Least Significant Bit (LSB)** steganography, storing **1 bit of hidden data in each byte of image data**.
+
+### 🔢 How Much Can I Hide?
+Every 1 **byte of secret data** requires **8 bytes of image data**.
+
+Formula:
+```
+Max file size = (image width × image height × 3) ÷ 8
+              = total RGB bytes ÷ 8
+```
+
+### 📈 Examples:
+| Image Size    | RGB Bytes       | Max Hidden Data |
+|---------------|------------------|------------------|
+| 256×256       | 196,608 bytes     | ~24.5 KB         |
+| 512×512       | 786,432 bytes     | ~98.3 KB         |
+| 1024×1024     | 3,145,728 bytes   | ~392 KB          |
+| 2048×2048     | 12,582,912 bytes  | ~1.57 MB         |
+
+### 🧰 Tips:
+- Try compressing large files before embedding (e.g., `.zip` or `.7z`).
+- For bigger payloads, use a higher resolution BMP image.
+- You can generate test BMPs using Paint, Photoshop, or via script.
+
+> Future versions may support file splitting across multiple images.
+---
 
 ## 📜 License
 

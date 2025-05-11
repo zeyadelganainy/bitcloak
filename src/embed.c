@@ -25,3 +25,37 @@ void embed_message(uint8_t *image_data, size_t image_size, const char *message) 
         }
     }
 }
+
+void embed_file(uint8_t *image_data, size_t image_size, const uint8_t *file_data, size_t file_size) {
+    size_t total_bits = (file_size + sizeof(size_t)) * 8;
+    if (total_bits > image_size) {
+        fprintf(stderr, "Error: file is too large to embed.\n");
+        exit(1);
+    }
+
+    size_t bit_index = 0;
+
+    // Embed file size (header)
+    for (int i = sizeof(size_t) - 1; i >= 0; --i) {
+        uint8_t byte = (file_size >> (i * 8)) & 0xFF;
+        for (int b = 7; b >= 0; --b) {
+            uint8_t bit = (byte >> b) & 1;
+            image_data[bit_index] &= 0xFE;
+            image_data[bit_index] |= bit;
+            bit_index++;
+        }
+    }
+
+    // Embed file data
+    for (size_t i = 0; i < file_size; ++i) {
+        uint8_t current_byte = file_data[i];
+        for (int b = 7; b >= 0; --b) {
+            uint8_t bit = (current_byte >> b) & 1;
+            image_data[bit_index] &= 0xFE;
+            image_data[bit_index] |= bit;
+            bit_index++;
+        }
+    }
+}
+
+
