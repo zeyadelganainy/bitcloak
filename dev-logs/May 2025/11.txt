@@ -1,0 +1,3 @@
+First thing I'm doing now is learning what is BMP and what LSB is. I broke down this app into a few different steps with the first being embedding a message into the image. To do that, I need to load it, hide the secret message (from .txt), save the new image with the message.
+
+I'm working with 24 bit uncompressed BMP because it seems straightforward. Each pixel is 3B one for each of the rgb channels and it's stored by row top to bottom and I can access each pixel data directly. 
