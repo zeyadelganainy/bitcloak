@@ -57,5 +57,3 @@ void embed_file(uint8_t *image_data, size_t image_size, const uint8_t *file_data
         }
     }
 }
-
-

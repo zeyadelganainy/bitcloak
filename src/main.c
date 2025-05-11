@@ -6,14 +6,16 @@
 #include "image_io.h"
 #include "embed.h"
 #include "extract.h"
+#include "utils.h"
+
 
 void print_usage(const char *prog) {
     fprintf(stderr,
         "Usage:\n"
         "  %s embed       -i <input.bmp>  -m <message>     -o <output.bmp>\n"
-        "  %s embedfile   -i <input.bmp>  -f <inputfile>   -o <output.bmp>\n"
+        "  %s embedfile   -i <input.bmp>  -f <inputfile>   -o <output.bmp> [--key <passphrase>]\n"
         "  %s extract     -i <input.bmp>  -o <output.txt>\n"
-        "  %s extractfile -i <input.bmp>  -o <outputfile>\n",
+        "  %s extractfile -i <input.bmp>  -o <outputfile> [--key <passphrase>]\n",
         prog, prog, prog, prog);
 }
 
@@ -28,6 +30,7 @@ int main(int argc, char *argv[]) {
     const char *out_path = NULL;
     const char *message = NULL;
     const char *file_path = NULL;
+    const char *encryption_key = NULL;
 
     // Parse CLI arguments
     for (int i = 2; i < argc; ++i) {
@@ -42,6 +45,9 @@ int main(int argc, char *argv[]) {
         }
         else if (strcmp(argv[i], "-f") == 0 && i+1 < argc) {
             file_path = argv[++i];
+        }
+        else if (strcmp(argv[i], "--key") == 0 && i+1 < argc) {
+            encryption_key = argv[++i];
         }
         else {
             fprintf(stderr, "Unknown option: %s\n", argv[i]);
@@ -110,6 +116,11 @@ int main(int argc, char *argv[]) {
         fread(fdata, 1, fsize, fp);
         fclose(fp);
 
+        if (encryption_key) {
+            xor_cipher(fdata, fsize, encryption_key);
+            printf("🔒 Encrypted file with XOR key.\n");
+        }
+
         embed_file(pixels, img_size, fdata, fsize);
         save_bmp(out_path, pixels, width, height);
         printf("✅ Embedded file into %s (%zu bytes)\n", out_path, fsize);
@@ -118,6 +129,11 @@ int main(int argc, char *argv[]) {
     else if (strcmp(cmd, "extractfile") == 0) {
         size_t fsize;
         uint8_t *data = extract_file(pixels, img_size, &fsize);
+
+        if (encryption_key) {
+            xor_cipher(data, fsize, encryption_key);
+            printf("🔓 Decrypted file with XOR key.\n");
+        }
 
         FILE *fp = fopen(out_path, "wb");
         if (!fp) {
