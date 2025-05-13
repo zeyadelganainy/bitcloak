@@ -41,4 +41,8 @@ desktop.ini
 Makefile~
 
 # Ignore all output files generated during benchmarking
-/outputs/
+/tests/outputs/
+/outputs/*.png
+/outputs/*.txt
+/outputs/extracted_*.txt
+/outputs/test_*.png
