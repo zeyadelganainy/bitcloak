@@ -1,0 +1,6 @@
+BitCloak GUI launched.
+Starting extract operation...
+Error: Failed to load stego image.
+BitCloak GUI exited.
+BitCloak GUI launched.
+BitCloak GUI exited.
