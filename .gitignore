@@ -130,3 +130,4 @@ tests/outputs/test_3840x2160_file_1024KB_xor.png
 tests/outputs/test_3840x2160_file_1024KB.png
 bitcloak.exe
 src/main.o
+tests/unit/test_crypto.exe

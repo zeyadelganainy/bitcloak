@@ -8,21 +8,21 @@
 #define AES256 1
 #define CBC 1
 
-static void derive_key(const char *passphrase, uint8_t *key) {
+void derive_key(const char *passphrase, uint8_t *key) {
     size_t len = strlen(passphrase);
     memset(key, 0, 32);
     if (len > 32) len = 32;
     memcpy(key, passphrase, len);
 }
 
-static void pkcs7_pad(uint8_t *data, size_t data_len, size_t padded_len) {
+void pkcs7_pad(uint8_t *data, size_t data_len, size_t padded_len) {
     uint8_t pad_value = padded_len - data_len;
     for (size_t i = data_len; i < padded_len; ++i) {
         data[i] = pad_value;
     }
 }
 
-static size_t pkcs7_unpad(uint8_t *data, size_t data_len) {
+size_t pkcs7_unpad(uint8_t *data, size_t data_len) {
     if (data_len == 0) return 0;
     uint8_t pad_value = data[data_len - 1];
     if (pad_value > AES_BLOCK_SIZE || pad_value == 0) return data_len;
